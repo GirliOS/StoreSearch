@@ -18,6 +18,7 @@
 		7931D84A1868685400518C74 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7931D8491868685400518C74 /* Default-568h@2x.png */; };
 		7931D84D1868685400518C74 /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7931D84C1868685400518C74 /* SearchViewController.m */; };
 		7931D8501868685400518C74 /* SearchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7931D84E1868685400518C74 /* SearchViewController.xib */; };
+		79A552FC18688E27002F71FD /* SearchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A552FB18688E27002F71FD /* SearchResult.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,8 @@
 		7931D84B1868685400518C74 /* SearchViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
 		7931D84C1868685400518C74 /* SearchViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
 		7931D84F1868685400518C74 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SearchViewController.xib; sourceTree = "<group>"; };
+		79A552FA18688E27002F71FD /* SearchResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchResult.h; sourceTree = "<group>"; };
+		79A552FB18688E27002F71FD /* SearchResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchResult.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +90,8 @@
 				7931D8431868685400518C74 /* AppDelegate.m */,
 				7931D84B1868685400518C74 /* SearchViewController.h */,
 				7931D84C1868685400518C74 /* SearchViewController.m */,
+				79A552FA18688E27002F71FD /* SearchResult.h */,
+				79A552FB18688E27002F71FD /* SearchResult.m */,
 				7931D84E1868685400518C74 /* SearchViewController.xib */,
 				7931D83A1868685400518C74 /* Supporting Files */,
 			);
@@ -176,6 +181,7 @@
 				7931D8401868685400518C74 /* main.m in Sources */,
 				7931D8441868685400518C74 /* AppDelegate.m in Sources */,
 				7931D84D1868685400518C74 /* SearchViewController.m in Sources */,
+				79A552FC18688E27002F71FD /* SearchResult.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
