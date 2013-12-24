@@ -13,4 +13,9 @@
 @synthesize name;
 @synthesize artistName;
 
+- (NSComparisonResult)compareName:(SearchResult *)other
+{
+    return [self.name localizedStandardCompare:other.name];
+}
+
 @end
