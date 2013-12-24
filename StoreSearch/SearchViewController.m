@@ -9,6 +9,7 @@
 #import "SearchViewController.h"
 #import "SearchResult.h"
 #import "SearchResultCell.h"
+#import "AFJSONRequestOperation.h"
 
 static NSString *const SearchResultCellIdentifier = @"SearchResultCell";
 static NSString *const NothingFoundCellIdentifier = @"NothingFoundCell";
@@ -24,10 +25,19 @@ static NSString *const LoadingCellIdentifier = @"LoadingCell";
 {
     NSMutableArray *searchResults;
     BOOL isLoading;
+    NSOperationQueue *queue;
 }
 
 //@synthesize searchBar;
 //@synthesize tableView;
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
+        queue = [[NSOperationQueue alloc] init];
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
@@ -151,22 +161,7 @@ static NSString *const LoadingCellIdentifier = @"LoadingCell";
     }
 }
 
-- (NSDictionary *)parseJSON:(NSString *)jsonString
-{
-    NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-    
-    NSError *error;
-    id resultObject = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-    if (resultObject == nil) {
-        NSLog(@"JSON Error:%@", error);
-        return nil;
-    }
-    if (![resultObject isKindOfClass:[NSDictionary class]]) {
-        NSLog(@"JSON Error: Expected dictionary");
-        return nil;
-    }
-    return resultObject;
-}
+
 
 #pragma mark - UITableViewDataSource
 
@@ -242,57 +237,37 @@ static NSString *const LoadingCellIdentifier = @"LoadingCell";
     return url;
 }
 
-- (NSString *)performStoreRequestWithURL:(NSURL *)url
-{
-    NSError *error;
-    NSString *resultString = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
-    if (resultString == nil) {
-        NSLog(@"Download Error:%@", error);
-        return nil;
-    }
-    return resultString;
-}
-
-
-
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
     if ([searchBar.text length] > 0) {
         [searchBar resignFirstResponder];
+        
+        [queue cancelAllOperations];
         
         isLoading = YES;
         [self.tableView reloadData];
         
         searchResults = [NSMutableArray arrayWithCapacity:10];
         
-        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_async(queue, ^{
-            NSURL *url = [self urlWithSearchText: searchBar.text];
-            NSString *jsonString = [self performStoreRequestWithURL:url];
-            if (jsonString == nil) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self showNetworkError];
-                });
-                return;
-            }
-            
-            NSDictionary *dictionary = [self parseJSON:jsonString];
-            if (dictionary == nil) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self showNetworkError];
-                });
-                return;
-            }
-            
-            [self parseDictionary:dictionary];
-            [searchResults sortUsingSelector:@selector(compareName:)];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                isLoading = NO;
-                [self.tableView reloadData];
-            });
-            
-        });
+        NSURL *url = [self urlWithSearchText:searchBar.text];
+        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+        
+        AFJSONRequestOperation *operation = [AFJSONRequestOperation
+            JSONRequestOperationWithRequest:request
+             success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON){
+                 [self parseDictionary:JSON];
+                 [searchResults sortUsingSelector:@selector(compareName:)];
+                 
+                 isLoading = NO;
+                 [self.tableView reloadData];
+             } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON){
+                 
+                 [self showNetworkError];
+                 isLoading = NO;
+                 [self.tableView reloadData];
+             }];
+        operation.acceptableContentTypes = [NSSet setWithObjects:@"appliction/json", @"text/json", @"text/javascript", nil];
+        [queue addOperation:operation];
     }
 } 
 
